@@ -15,7 +15,6 @@ go to getbootstrap.com copy the css link
 css link :  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 go use bootstarp from another server
 js link : <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
 add these scripts to application.html.erb
 
 
@@ -26,3 +25,4 @@ partial [whatever files are rendered using partials will start with an underscor
 link_to [ruby syntax -> <%= link_to "About, about_path, class: "nav-link" %>  
           html-> <a class="nav-link" href="/about">About</a>]
 run rails routes : here the prefix is the name of the route which can be configured
+
