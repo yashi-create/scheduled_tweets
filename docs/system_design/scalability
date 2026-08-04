@@ -1,0 +1,56 @@
+**SCALABILITY**
+
+Application server :
+<!-- check internal data storage of an application server -->
+Data store : 
+Amazon Machine Image(AMI) : a preconfigured template containing an operating system and software, used to launch virtual servers known as Amazon EC2 instances.
+Amazon EC2 instances : 
+Application : 
+Codebase : 
+User<->friend relationship : 
+
+
+
+Golden rule of scalability : Every server should contain exactly the same codebase and not store any user-related information like sessions, passwords, or profile pictures into the local disc or memory
+
+1. CLONES
+-> Public servers of a web service is hidden behind a layer of load balancers.
+-> These load balancers evenly distribute the incoming load to the application servers
+-> challenge : if a user X 1st request is route through server 2, request 2 through server 9 and then request 3 again through server 2. the user should always receieve the same result irrespective of which server picked his request. to solve this problem we follow the Golden rule. 
+-> How to make sure that the code change is sent to all the servers without one server still serving old code? This is resolved through a tool named *Capistrano*
+-> Once the sessions are outsourced and the same codebase is been used from all the servers, we can create an image file from one of these servers known as AMI on AWS. All the new instances are then based upon this AMI
+-- this help us to scale horizontally by serving thousands of requests concurrently
+
+2. DATABASE
+-> The horizontal scaling is done, and you have added multiple servers. But for some reason your application is running slow and ultimately breaks. This is due to the . There are two possible paths :
+PATH 1 : Implement master-slave replication(read from slaves, write to master) and keep adding more RAM to it. But after few months you might face issues such as sharding, denormalization and SQL tuning. And here on any solution to keep your application up and running will be expensive.
+PATH 2 : Denormalize from the start. No more joins in database query. Do joins at the application level. But as the database grow, you still might need to introduce a cache
+
+3. CACHE
+solving : slow response when a ton of data is being fetched
+file-based caching: stores data or rendered web pages as physical files on a computer's local disk instead of keeping them in active memory or querying a database. problem : Slower read and write speeds than RAM, can clutter the disk with thousands of tiny files, and struggles with fast traffic updates
+recommended : memcached or redis (in memory)
+-> it a simple key-value store.
+-> acts as a buffering layer between the application and the data storage.
+-> the code should first trying fetching data from cache and if it doesn't find it there, then pnly it should check the actual data source. reason? redis is lightning fast. it holds every dataset in RAM and requests are handled as fast as possible.
+-> eg : Redis can do upto several hundreds of thousands of read operations per second while being hosted on a standard server.
+-> there are two patterns to cache data : 
+P1. *Cached database queries*
+Just store the result of your database query. first time doing the database query. storing the result using a cache key. now if the same code is hit again, first check the cache using the same key. if something is present there then use that data only, if not then look into the main data source.
+issues : It is hard to delete a cached result when you cache a complex query. When one piece of data changes you need to discard the entire cached result.
+
+P2. *Cache Objects*
+-> storing the complete instance of the class or the assembeled dataset in the cache
+-> once the class has finished assembling the data, store the complete instance of the class into the cache
+-> objects to cache : user sessions, static content like blogs/text, user<->friend relationship 
+
+
+4. ASYNCHRONISM
+Any task which is time consuming, we prefer it to do asynchronously
+-> ther are primarily two approaches in which the asynchronous tasks can be done :
+
+P1. Async1 : If you are aware of the time consuming task, then pre compute it before serving the clients request. For example, user specific recommendations can be pre-computed during the low traffic hours. [ mostly cron jobs ]
+
+P2. Async2 : But what if the user has some special request, which you cater on a less frequncy? You send this request to backend in a queue for processing. A number of workers will be listening to this queue and would pick up the task as soon as there is an event in the queue. The worker will work on the task, complete it and send it back to the webpage. In the meantime the user can browse or do anything else.
+[ mostly rabbitMq, kafka and similar tech ]
+

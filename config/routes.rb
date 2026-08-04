@@ -4,4 +4,6 @@ Rails.application.routes.draw do
   get "about-us" => "about#index", as: :about  # here name is defined through about, and we can keep changing the url (about-us), but the name will remain same
   root "main#index"    # changing the homepage of our application   , here root == get "/"
   get "up" => "rails/health#show", as: :rails_health_check
+  get "sign_up" => "registrations#new"
+  post "sign_up" => "registrations#create"
 end
