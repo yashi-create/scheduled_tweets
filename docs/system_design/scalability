@@ -53,4 +53,3 @@ P1. Async1 : If you are aware of the time consuming task, then pre compute it be
 
 P2. Async2 : But what if the user has some special request, which you cater on a less frequncy? You send this request to backend in a queue for processing. A number of workers will be listening to this queue and would pick up the task as soon as there is an event in the queue. The worker will work on the task, complete it and send it back to the webpage. In the meantime the user can browse or do anything else.
 [ mostly rabbitMq, kafka and similar tech ]
-
